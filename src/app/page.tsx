@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Dropzone } from '@/components/upload/dropzone';
 import { Button } from '@/components/ui/button';
+import { createClient } from '@/lib/auth/supabase-browser';
 import {
   Shield,
   Clock,
@@ -22,6 +23,21 @@ export default function HomePage() {
   const [file, setFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session?.user);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => setIsLoggedIn(!!session?.user)
+    );
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleFileSelected = (selectedFile: File) => {
     setFile(selectedFile);
@@ -30,6 +46,13 @@ export default function HomePage() {
 
   const handleContinue = async () => {
     if (!file) return;
+
+    // Force login if not authenticated
+    if (!isLoggedIn) {
+      router.push('/login?redirect=/');
+      return;
+    }
+
     setProcessing(true);
     setUploadError(null);
 
@@ -103,6 +126,11 @@ export default function HomePage() {
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Uploading...
+                    </>
+                  ) : !isLoggedIn ? (
+                    <>
+                      Sign in to Analyze
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </>
                   ) : (
                     <>
