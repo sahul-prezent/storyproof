@@ -1,0 +1,73 @@
+import type { SignalDefinition, CategoryDefinition, CategoryKey } from '@/types/scoring';
+
+export const CATEGORIES: CategoryDefinition[] = [
+  { key: 'narrative_structure', name: 'Narrative Structure', weight: 0.20, signalIds: [1, 2, 3, 4, 5, 6] },
+  { key: 'business_communication', name: 'Business Communication', weight: 0.18, signalIds: [7, 8, 9, 10, 11, 12] },
+  { key: 'slide_level_quality', name: 'Slide-Level Quality', weight: 0.15, signalIds: [13, 14, 15, 16, 17] },
+  { key: 'slide_design_quality', name: 'Slide Design Quality', weight: 0.12, signalIds: [18, 19, 20, 21, 22] },
+  { key: 'persuasion_conviction', name: 'Persuasion & Conviction', weight: 0.15, signalIds: [23, 24, 25, 26] },
+  { key: 'structural_completeness', name: 'Structural Completeness', weight: 0.08, signalIds: [27, 28] },
+  { key: 'biopharma_specific', name: 'BioPharma-Specific', weight: 0.12, signalIds: [29, 30, 31, 32, 33, 34, 35, 36] },
+];
+
+export const SIGNALS: SignalDefinition[] = [
+  // Category 1: Narrative Structure
+  { id: 1, key: 'opening_hook', name: 'Opening Hook Strength', category: 'narrative_structure', description: 'Does slide 1 open with a problem, tension, or insight?', goodCriteria: 'Problem-first or insight-first opening', needsWorkCriteria: 'Starts with About Us or table of contents', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 2, key: 'story_arc', name: 'Story Arc Completeness', category: 'narrative_structure', description: 'Does the deck follow setup → conflict → resolution?', goodCriteria: 'Problem established before solution appears', needsWorkCriteria: 'Solution on slide 2 with no context', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 3, key: 'narrative_thread', name: 'Single Narrative Thread', category: 'narrative_structure', description: 'Can you read slide titles in sequence and follow one coherent argument?', goodCriteria: 'Titles tell the story alone', needsWorkCriteria: 'Generic titles like Overview, Market, Solution', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 4, key: 'closing_cta', name: 'Closing Call to Action', category: 'narrative_structure', description: 'Does the final slide give the audience one clear next step?', goodCriteria: 'One explicit ask', needsWorkCriteria: 'Ends with Thank You or contact slide', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 5, key: 'logical_sequencing', name: 'Logical Slide Sequencing', category: 'narrative_structure', description: 'Does each slide earn the right to follow the previous one?', goodCriteria: 'Each slide answers a question raised by the one before', needsWorkCriteria: 'Topic jumps or unrelated asides', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 6, key: 'slide_count_efficiency', name: 'Slide Count Efficiency', category: 'narrative_structure', description: 'Is the deck a lean, intentional length for its goal?', goodCriteria: 'Every slide moves the argument forward', needsWorkCriteria: 'Filler slides, repeated points, appendix longer than deck', requiresPptxOnly: false, modelTier: 'fast', conversionCritical: false },
+
+  // Category 2: Business Communication
+  { id: 7, key: 'headline_clarity', name: 'Headline Clarity', category: 'business_communication', description: 'Does each slide headline communicate a complete thought?', goodCriteria: 'Complete insight as headline', needsWorkCriteria: 'Label-only titles like Q3 Results', requiresPptxOnly: false, modelTier: 'standard', conversionCritical: false },
+  { id: 8, key: 'executive_readability', name: 'Executive Readability', category: 'business_communication', description: 'Could a VP understand each slide in under 10 seconds?', goodCriteria: 'One core message per slide, clearly surfaced', needsWorkCriteria: 'Dense paragraphs or buried insight', requiresPptxOnly: false, modelTier: 'standard', conversionCritical: false },
+  { id: 9, key: 'jargon_complexity', name: 'Jargon & Complexity Level', category: 'business_communication', description: 'Is the language calibrated to the audience?', goodCriteria: 'Plain business language, no unexplained acronyms', needsWorkCriteria: 'Technical terms or internal abbreviations', requiresPptxOnly: false, modelTier: 'standard', conversionCritical: false },
+  { id: 10, key: 'message_hierarchy', name: 'Message Hierarchy', category: 'business_communication', description: 'Is it obvious what the most important point on each slide is?', goodCriteria: 'One dominant message, supporting detail secondary', needsWorkCriteria: 'Five equally weighted bullets', requiresPptxOnly: false, modelTier: 'standard', conversionCritical: false },
+  { id: 11, key: 'action_orientation', name: 'Action Orientation', category: 'business_communication', description: 'Does the deck tell the audience what to think or do?', goodCriteria: 'Language points toward decisions', needsWorkCriteria: 'Purely descriptive, no recommendations', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 12, key: 'audience_empathy', name: 'Audience Empathy Signal', category: 'business_communication', description: 'Does the deck show it understands the audience\'s problem?', goodCriteria: 'Audience challenge named early', needsWorkCriteria: '80% of slides about the company, not the buyer', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: true },
+
+  // Category 3: Slide-Level Quality
+  { id: 13, key: 'one_idea_per_slide', name: 'One Idea Per Slide', category: 'slide_level_quality', description: 'Is each slide built around a single clear idea?', goodCriteria: 'One argument, one visual, one takeaway', needsWorkCriteria: 'Multiple unrelated points crammed in', requiresPptxOnly: false, modelTier: 'standard', conversionCritical: false },
+  { id: 14, key: 'text_density', name: 'Text Density Per Slide', category: 'slide_level_quality', description: 'Word count per slide — under 50 words is the benchmark.', goodCriteria: 'Under 50 words on body slides', needsWorkCriteria: 'Slides exceeding 100 words', requiresPptxOnly: false, modelTier: 'fast', conversionCritical: false },
+  { id: 15, key: 'bullet_overload', name: 'Bullet Overload Detection', category: 'slide_level_quality', description: 'How many slides rely on 5+ bullet points?', goodCriteria: 'Bullets used sparingly', needsWorkCriteria: 'Every slide is a bullet dump', requiresPptxOnly: false, modelTier: 'fast', conversionCritical: false },
+  { id: 16, key: 'data_slide_clarity', name: 'Data Slide Clarity', category: 'slide_level_quality', description: 'For chart slides — is the insight labeled?', goodCriteria: 'Callout or headline states what the data means', needsWorkCriteria: 'Chart present but no annotation', requiresPptxOnly: false, modelTier: 'standard', conversionCritical: false },
+  { id: 17, key: 'slide_title_quality', name: 'Slide Title Quality Score', category: 'slide_level_quality', description: 'Percentage of insight-driven titles vs label titles.', goodCriteria: '70%+ insight-driven titles', needsWorkCriteria: 'Majority are one-word labels', requiresPptxOnly: false, modelTier: 'fast', conversionCritical: false },
+
+  // Category 4: Slide Design Quality
+  { id: 18, key: 'template_consistency', name: 'Template Consistency', category: 'slide_design_quality', description: 'Are fonts, colors, and layouts consistent?', goodCriteria: 'Uniform visual system', needsWorkCriteria: 'Mixed fonts, inconsistent logos', requiresPptxOnly: true, modelTier: 'fast', conversionCritical: false },
+  { id: 19, key: 'visual_to_text_ratio', name: 'Visual to Text Ratio', category: 'slide_design_quality', description: 'Does the deck use visuals to carry meaning?', goodCriteria: 'At least 40% of slides have meaningful visuals', needsWorkCriteria: 'Text-only deck throughout', requiresPptxOnly: false, modelTier: 'fast', conversionCritical: false },
+  { id: 20, key: 'brand_compliance', name: 'Brand Compliance', category: 'slide_design_quality', description: 'Does the deck use brand colors, fonts, and logo correctly?', goodCriteria: 'On-brand throughout', needsWorkCriteria: 'Off-brand colors, missing logo', requiresPptxOnly: true, modelTier: 'standard', conversionCritical: false },
+  { id: 21, key: 'slide_clutter', name: 'Slide Clutter Score', category: 'slide_design_quality', description: 'Are slides visually clean or overloaded?', goodCriteria: 'Generous white space, limited elements', needsWorkCriteria: 'Six charts, three text boxes on one slide', requiresPptxOnly: true, modelTier: 'standard', conversionCritical: false },
+  { id: 22, key: 'font_readability', name: 'Font & Color Readability', category: 'slide_design_quality', description: 'Is text readable at presentation scale?', goodCriteria: 'High contrast, 18pt+ body text', needsWorkCriteria: 'Light gray on white, sub-14pt fonts', requiresPptxOnly: true, modelTier: 'fast', conversionCritical: false },
+
+  // Category 5: Persuasion & Conviction
+  { id: 23, key: 'evidence_quality', name: 'Evidence Quality', category: 'persuasion_conviction', description: 'Are claims backed by data, proof, or examples?', goodCriteria: 'Every claim has a number, quote, or case study', needsWorkCriteria: 'Vague statements like industry-leading', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 24, key: 'objection_anticipation', name: 'Objection Anticipation', category: 'persuasion_conviction', description: 'Does the deck pre-empt the obvious questions?', goodCriteria: 'Likely objections pre-empted', needsWorkCriteria: 'Only the positive case presented', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 25, key: 'emotional_resonance', name: 'Emotional Resonance', category: 'persuasion_conviction', description: 'Does the deck create genuine urgency or connection?', goodCriteria: 'At least one human moment', needsWorkCriteria: 'Entirely rational, no emotional texture', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 26, key: 'stakes_clarity', name: 'Stakes Clarity', category: 'persuasion_conviction', description: 'Does the audience know what is at risk if they do nothing?', goodCriteria: 'Cost of inaction named explicitly', needsWorkCriteria: 'Only sells the upside', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: true },
+
+  // Category 6: Structural Completeness
+  { id: 27, key: 'section_coverage', name: 'Expected Section Coverage', category: 'structural_completeness', description: 'Does the deck include the sections the audience expects?', goodCriteria: 'All standard sections present', needsWorkCriteria: 'Missing business case or next steps', requiresPptxOnly: false, modelTier: 'standard', conversionCritical: false },
+  { id: 28, key: 'appendix_hygiene', name: 'Appendix Hygiene', category: 'structural_completeness', description: 'Is supporting detail in an appendix so the main deck stays focused?', goodCriteria: 'Clean main deck, clearly labeled appendix', needsWorkCriteria: 'Deep technical slides mixed into narrative', requiresPptxOnly: false, modelTier: 'fast', conversionCritical: false },
+
+  // Category 7: BioPharma-Specific
+  { id: 29, key: 'evidence_citation', name: 'Evidence Citation Quality', category: 'biopharma_specific', description: 'Are data claims linked to a named source?', goodCriteria: 'Every quantitative claim has an attributed source', needsWorkCriteria: 'Statistics without citation', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 30, key: 'mlr_readiness', name: 'MLR Readiness Flag', category: 'biopharma_specific', description: 'Are there unsubstantiated superlatives or off-label risks?', goodCriteria: 'Claims qualified and balanced', needsWorkCriteria: 'Phrases like best-in-class without safety context', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: true },
+  { id: 31, key: 'scientific_translation', name: 'Scientific-to-Lay Translation', category: 'biopharma_specific', description: 'Is technical content explained at the right level?', goodCriteria: 'Mechanisms summarized with business implications', needsWorkCriteria: 'Reads like a journal abstract', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 32, key: 'clinical_data_viz', name: 'Clinical Data Visualization', category: 'biopharma_specific', description: 'For clinical charts — is the key finding called out?', goodCriteria: 'Primary endpoint result as headline', needsWorkCriteria: 'Raw Kaplan-Meier curve with no callout', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 33, key: 'patient_centricity', name: 'Patient-Centricity Signal', category: 'biopharma_specific', description: 'Does the deck ground science in patient impact?', goodCriteria: 'Patient outcomes or burden of disease referenced', needsWorkCriteria: 'Purely product-centric', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 34, key: 'cross_functional_calibration', name: 'Cross-Functional Audience Calibration', category: 'biopharma_specific', description: 'For mixed audiences — does it serve all groups?', goodCriteria: 'Sections segmented by audience need', needsWorkCriteria: 'Scientific slides mixed with financials', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 35, key: 'regulatory_awareness', name: 'Regulatory Context Awareness', category: 'biopharma_specific', description: 'Does the deck correctly acknowledge regulatory status?', goodCriteria: 'Every asset labeled with regulatory stage', needsWorkCriteria: 'Pipeline asset presented as if approved', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+  { id: 36, key: 'launch_readiness', name: 'Launch Readiness Narrative', category: 'biopharma_specific', description: 'For launch decks — credible launch narrative arc?', goodCriteria: 'Clear arc from disease burden to go-to-market', needsWorkCriteria: 'Jumps to product features without context', requiresPptxOnly: false, modelTier: 'advanced', conversionCritical: false },
+];
+
+export function getSignalsForCategory(categoryKey: CategoryKey): SignalDefinition[] {
+  const category = CATEGORIES.find(c => c.key === categoryKey);
+  if (!category) return [];
+  return category.signalIds.map(id => SIGNALS.find(s => s.id === id)!).filter(Boolean);
+}
+
+export function getCategoryByKey(key: CategoryKey): CategoryDefinition | undefined {
+  return CATEGORIES.find(c => c.key === key);
+}
