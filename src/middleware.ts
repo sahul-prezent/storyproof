@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Protect /admin routes — redirect to login if no auth cookie
   if (request.nextUrl.pathname.startsWith('/admin')) {
+    // Check for any Supabase auth cookie (including chunked cookies like sb-xxx-auth-token.0)
     const hasAuthCookie = request.cookies.getAll().some(
-      c => c.name.startsWith('sb-') && c.name.endsWith('-auth-token')
+      c => c.name.startsWith('sb-') && c.name.includes('-auth-token')
     );
 
     if (!hasAuthCookie) {
