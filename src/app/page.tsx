@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { nanoid } from 'nanoid';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Dropzone } from '@/components/upload/dropzone';
@@ -57,29 +58,41 @@ export default function HomePage() {
     setUploadError(null);
 
     try {
-      // Upload file to server → Supabase Storage
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || 'Upload failed.');
+      // Validate file type
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      const fileType = ext === 'pptx' ? 'pptx' : ext === 'pdf' ? 'pdf' : null;
+      if (!fileType) {
+        throw new Error('Unsupported file type. Please upload a .pptx or .pdf file.');
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        throw new Error('File too large. Maximum size is 50MB.');
       }
 
-      const { storagePath, fileName, fileType } = await res.json();
+      // Upload directly to Supabase Storage from browser (bypasses Vercel size limits)
+      const fileId = nanoid();
+      const storagePath = `temp/${fileId}.${ext}`;
+      const supabase = createClient();
+
+      const { error: storageError } = await supabase.storage
+        .from('uploads')
+        .upload(storagePath, file, {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (storageError) {
+        console.error('Supabase storage error:', storageError);
+        throw new Error(storageError.message || 'Upload failed. Please try again.');
+      }
 
       // Store upload metadata in sessionStorage (small strings only)
       sessionStorage.setItem('storyproof_storagePath', storagePath);
-      sessionStorage.setItem('storyproof_fileName', fileName);
+      sessionStorage.setItem('storyproof_fileName', file.name);
       sessionStorage.setItem('storyproof_fileType', fileType);
 
       router.push('/context');
     } catch (err) {
+      console.error('Upload error:', err);
       setUploadError(err instanceof Error ? err.message : 'Upload failed.');
       setProcessing(false);
     }
